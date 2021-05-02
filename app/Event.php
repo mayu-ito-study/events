@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     protected $fillable = ['content'];
+    protected $dates = ['date', 'created_at', 'updated_at',];
 
     /**
      * この投稿を所有するユーザ。（ Userモデルとの関係を定義）

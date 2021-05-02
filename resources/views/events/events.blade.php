@@ -15,7 +15,7 @@
 
                 
                 <p>{!! link_to_route('events.show', $event->title, ['event' => $event->id], ['class' => 'card-title font-weight-bold']) !!}</p>
-                開催日：{{ $event->date }}
+                開催日：{{ $event->date->format('Y年m月d日') }}
                 @auth
                 <div class="text-center">
                    <!--お気に入りと修正ボタン-->

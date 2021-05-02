@@ -39,12 +39,15 @@ class EventsController extends Controller
         // 日付が選択されていたら
         if ($request->filled('date')) {
             //dd($request->input('date'));
-            $events->whereDate('date', '>=', $request->input('date'));
+            $events->whereDate('date', '=', $request->input('date'));
             //dd($events->whereDate('date', '>=', $request->input('date'))->toSql());
+        }else {
+            $now = now()->format('Y-m-d H:i:s');
+            $events->whereDate('date', '>=', $now);
         }
         
         //$events->orderBy('id', 'desc')->paginate(15);
-        
+
         // イベント一覧ビューでそれを表示
         return view('events.index', [
             'events' => $events->orderBy('id', 'desc')->paginate(15),
@@ -105,7 +108,13 @@ class EventsController extends Controller
     public function store(Request $request)
     {
         
-        $this->validate($request, ['image' => 'required|image']);
+        $this->validate($request, [
+            'image' => 'required|image',
+            'title' => 'required',
+            'content' =>'required',
+            'date' => 'required',
+            'place' => 'required'
+            ]);
 
         $image = $request->file('image');
 
@@ -172,12 +181,18 @@ class EventsController extends Controller
         // idの値で投稿を検索して取得
         $event = Event::findOrFail($id);
         $tags = Tag::all();
-        // $tags = $event->tags; //
-        // メッセージ編集ビューでそれを表示
+        
+        // 自分の投稿の場合編集画面へ
+        if (\Auth::id() === $event->user_id ) {
         return view('events.edit', [
             'event' => $event,
             'tags' => $tags,
         ]);
+            
+        } else {
+            // 自分以外の投稿の場合はトップへリダイレクト
+            return redirect('/');
+        }
     }
 
     /**
@@ -189,24 +204,35 @@ class EventsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, ['image' => 'required|image']);
-        $event = \App\Event::findOrFail($id);
+        $this->validate($request, [
+            'title' => 'required',
+            'content' =>'required',
+            'date' => 'required',
+            'place' => 'required'
+            ]);
+          
+        if($request->image !== null) {
+            $event = \App\Event::findOrFail($id);
             if ($event->image !== $request->image) {
                 $disc = \Storage::disk('s3')->delete($event->image);
             }
-        $image = $request->file('image');
-        /**
-         * 自動生成されたファイル名が付与されてS3に保存される。
-         * 第三引数に'public'を付与しないと外部からアクセスできないので注意。
-         */
-        $path = \Storage::disk('s3')->putFile('myprefix', $image, 'public');
+            $image = $request->file('image');
+            /**
+             * 自動生成されたファイル名が付与されてS3に保存される。
+             * 第三引数に'public'を付与しないと外部からアクセスできないので注意。
+             */
+            $path = \Storage::disk('s3')->putFile('myprefix', $image, 'public');
+        }    
+
         // idの値でメッセージを検索して取得
         $event = Event::findOrFail($id);
         // 投稿を更新
         $event->user_id = \Auth::id();
         $event->title = $request->title;
         $event->content = $request->content;
-        $event->image = $path;
+        if($request->image !== null) {
+            $event->image = $path;
+        }
         $event->date = $request->date;
         $event->place = $request->place;
         $event->save();
