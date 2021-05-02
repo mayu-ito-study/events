@@ -19,7 +19,7 @@
     <p>投稿日：{{ $event->created_at->format('Y年m月d日') }}</p>
    <!--お気に入りと修正ボタン-->
    @auth
-    <div class="d-flex justify-content-center mt-5">
+    <div class="d-flex justify-content-center my-5">
         @include('user_favorite.favorite_button')
         @if($event->user->id === Auth::user()->id)
             {!! link_to_route('events.edit', '修正', ['event' => $event->id], ['class' => 'btn btn-light ml-3']) !!}

@@ -13,8 +13,11 @@
             {!! Form::select('tag', [0 => '全て'] + $tagArray, request('tag'), ['class' => 'form-control']) !!}
         </li>
         <li class="nav-item nav-link">開催日で絞り込む
-            <!--<input class="datepicker" type="text">-->
-            {!! Form::date('date', request('date'), ['class' => 'form-control']) !!}
+            <div class="d-flex">
+                {!! Form::date('date_to', request('date_to'), ['class' => 'form-control']) !!}
+                <p class="my-auto">　〜　</p>
+                {!! Form::date('date_from', request('date_from'), ['class' => 'form-control']) !!}
+            </div>
         </li>
         <li class="nav-item nav-link">
              {!! Form::submit('検索', ['class' => 'btn btn-primary mt-4']) !!}

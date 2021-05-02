@@ -37,10 +37,11 @@ class EventsController extends Controller
         }
         
         // 日付が選択されていたら
-        if ($request->filled('date')) {
+        if ($request->filled('date_to','date_from')) {
             //dd($request->input('date'));
-            $events->whereDate('date', '=', $request->input('date'));
-            //dd($events->whereDate('date', '>=', $request->input('date'))->toSql());
+            $events->whereBetween('date', [$request->input('date_to'), $request->input('date_from')])->get();
+            // $events->whereDate('date', '=', $request->input('date_to'));
+            // dd($events->whereDate('date_to', '=', $request->input('date'))->toSql());
         }else {
             $now = now()->format('Y-m-d H:i:s');
             $events->whereDate('date', '>=', $now);
@@ -142,7 +143,7 @@ class EventsController extends Controller
         $event->title = $request->title;
         $event->content = $request->content;
         $event->image = $path;
-        $event->date = $request->date;
+        $event->date = $request->date_to;
         $event->place = $request->place;
         $event->save();
         
@@ -233,7 +234,7 @@ class EventsController extends Controller
         if($request->image !== null) {
             $event->image = $path;
         }
-        $event->date = $request->date;
+        $event->date = $request->date_to;
         $event->place = $request->place;
         $event->save();
 

@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             TagsTableSeeder::class,
             EventsTableSeeder::class,
             EventTagTableSeeder::class,
+            UserFollowTableSeeder::class,
         ]);
     }
 }
