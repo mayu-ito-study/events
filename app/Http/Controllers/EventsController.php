@@ -26,6 +26,7 @@ class EventsController extends Controller
         $events = Event::query();
         $tags = Tag::all();
         $tagArray = Tag::all()->pluck('name', 'id')->toArray();
+        $now = now()->format('Y-m-d');
         
         // 検索
         
@@ -35,15 +36,20 @@ class EventsController extends Controller
                 $query->where('event_tag.tag_id', $request->input('tag'));
             });
         }
-        
+        // dd($request->input('date_to'));
         // 日付が選択されていたら
-        if ($request->filled('date_to','date_from')) {
-            //dd($request->input('date'));
-            $events->whereBetween('date', [$request->input('date_to'), $request->input('date_from')])->get();
+        if ($request->filled('date_from','date_to')) {
+            $events->whereBetween('date', [$request->input('date_from'), $request->input('date_to')])->get();
             // $events->whereDate('date', '=', $request->input('date_to'));
             // dd($events->whereDate('date_to', '=', $request->input('date'))->toSql());
+            
+        }elseif ($request->filled('date_from') && $request->date_to === null) {
+            $events->whereDate('date', '>=', $request->input('date_from'));
+            
+        }elseif ($request->filled('date_to') && $request->date_from === null) {
+            $events->whereDate('date', '<=', $request->input('date_to'));
+            
         }else {
-            $now = now()->format('Y-m-d H:i:s');
             $events->whereDate('date', '>=', $now);
         }
         
@@ -54,6 +60,7 @@ class EventsController extends Controller
             'events' => $events->orderBy('id', 'desc')->paginate(15),
             'tags' => $tags,
             'tagArray' => $tagArray,
+            'now' => $now,
         ]);
     }
     /**

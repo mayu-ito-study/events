@@ -30,7 +30,7 @@
                 
                 <div class="form-group">
                     {!! Form::label('date', '開催日') !!}
-                    {!! Form::date('date', old('date'), ['class' => 'form-control']) !!}
+                    {!! Form::date('date', old('date', $event->date), ['class' => 'form-control']) !!}
                 </div>
                 
                 <div class="form-group">
