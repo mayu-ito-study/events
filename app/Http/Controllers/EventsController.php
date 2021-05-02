@@ -143,7 +143,7 @@ class EventsController extends Controller
         $event->title = $request->title;
         $event->content = $request->content;
         $event->image = $path;
-        $event->date = $request->date_to;
+        $event->date = $request->date;
         $event->place = $request->place;
         $event->save();
         
@@ -234,7 +234,7 @@ class EventsController extends Controller
         if($request->image !== null) {
             $event->image = $path;
         }
-        $event->date = $request->date_to;
+        $event->date = $request->date;
         $event->place = $request->place;
         $event->save();
 
