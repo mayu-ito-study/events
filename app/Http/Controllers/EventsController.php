@@ -118,10 +118,10 @@ class EventsController extends Controller
         
         $this->validate($request, [
             'image' => 'required|image',
-            'title' => 'required',
+            'title' => 'required|max:255',
             'content' =>'required',
             'date' => 'required',
-            'place' => 'required'
+            'place' => 'required|max:255'
             ]);
 
         $image = $request->file('image');
@@ -213,10 +213,10 @@ class EventsController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'title' => 'required',
+            'title' => 'required|max:255',
             'content' =>'required',
             'date' => 'required',
-            'place' => 'required'
+            'place' => 'required|max:255'
             ]);
           
         if($request->image !== null) {
